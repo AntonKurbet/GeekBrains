@@ -125,66 +125,225 @@ public class TicTacToe {
     }
 
     // задача 3
+    // boolean calcHorLine3,calcVerLine3,calcDiaLineL3,calcDiaLineR3
+    // maxSum не считаем
+    // return sum == dotNumber;
+
     private static boolean checkWin3(char c) {
-        return checkHorline3(c) | checkVerLine3(c) | checkDiaLine3(c);
+        return calcHorLine3(c) == dotNumber | calcVerLine3(c) == dotNumber |
+                calcDiaLineL3(c) == dotNumber | calcDiaLineR3(c) == dotNumber;
     }
-    private static boolean checkHorline3(char c) {
-        int sum = 0;
-        for (int i = 0; i < fieldSizeX - dotNumber; i ++) {
-            sum = 0;
+    private static int calcHorLine3(char c) {
+        int maxSum = 0;
+        for (int i = 0; i <= fieldSizeX - dotNumber; i ++) {
+            int sum = 0;
             for (int x = 0; x < dotNumber; x++) {
-                if (field[lastY][x + i] == c) sum = sum +  1;
-                else sum = 0;
+                if (field[lastY][x + i] == c) {
+                    sum = sum +  1;
+                    if (sum > maxSum) maxSum = sum;
+                }
+                else {
+                    if (sum > maxSum) maxSum = sum;
+                    sum = 0;
+                }
                 if (sum == dotNumber) break;
             }
             if (sum == dotNumber) break;
         }
-        return sum == dotNumber;
+        return maxSum;
     }
-    private static boolean checkVerLine3(char c) {
-        int sum = 0;
-        for (int i = 0; i < fieldSizeY - dotNumber; i ++) {
-            sum = 0;
+    private static int calcVerLine3(char c) {
+        int maxSum = 0;
+        for (int i = 0; i <= fieldSizeY - dotNumber; i ++) {
+            int sum = 0;
             for (int y = 0; y < dotNumber; y++) {
-                if (field[y + i][lastX] == c) sum = sum +  1;
-                else sum = 0;
+                if (field[y + i][lastX] == c) {
+                    sum = sum +  1;
+                    if (sum > maxSum) maxSum = sum;
+                }
+                else {
+                    if (sum > maxSum) maxSum = sum;
+                    sum = 0;
+                }
                 if (sum == dotNumber) break;
             }
             if (sum == dotNumber) break;
         }
-        return sum == dotNumber;
+        return maxSum;
     }
     private static int diaFunc1 (int x) {
-        // equation of diagonal left to right
+        // уравнение прямой проходящей через точку (lastX,lastY)
+        // по диагонали слева направо
         return x - lastX + lastY;
     }
     private static int diaFunc2 (int x) {
-        // equation of diagonal right to left
+        // уравнение прямой проходящей через точку (lastX,lastY)
+        // по диагонали справа налево
         return -x + lastX + lastY;
     }
-    private static boolean checkDiaLine3(char c) {
+    private static int calcDiaLineL3(char c) {
         int sum = 0;
+        int maxSum = 0;
         for (int x = 0; x<fieldSizeX; x++) {
             int y = diaFunc1(x);
             if (y >= 0 && y < fieldSizeY) {
-                if (field[y][x] == c) sum = sum + 1;
-                else sum = 0;
+                if (field[y][x] == c) {
+                    sum = sum + 1;
+                    if (sum > maxSum) maxSum = sum;
+                }
+                else {
+                    if (sum > maxSum) maxSum = sum;
+                    sum = 0;
+                }
                 if (sum == dotNumber) break;
             }
         }
+        return maxSum;
+    }
+    private static int calcDiaLineR3(char c) {
+        int sum = 0;
+        int maxSum = 0;
+        for (int x = fieldSizeX - 1; x >= 0; x--) {
+            int y = diaFunc2(x);
+            if (y >= 0 && y < fieldSizeY) {
+                if (field[y][x] == c) {
+                    sum = sum + 1;
+                    if (sum > maxSum) maxSum = sum;
+                }
+                else {
+                    if (sum > maxSum) maxSum = sum;
+                    sum = 0;
+                }
+                if (sum == dotNumber) break;
+            }
+        }
+        return maxSum;
+    }
 
-        if (sum != dotNumber) {
-            sum = 0;
-            for (int x = fieldSizeX - 1; x >= 0; x--) {
-                int y = diaFunc2(x);
-                if (y >= 0 && y < fieldSizeY) {
-                    if (field[y][x] == c) sum = sum + 1;
-                    else sum = 0;
-                    if (sum == dotNumber) break;
+
+    // задача 4
+    private static void aiSmartTurn() {
+        int horSum = calcHorLine3(DOT_HUMAN);
+        int verSum = calcVerLine3(DOT_HUMAN);
+        int diaLSum = calcDiaLineL3(DOT_HUMAN);
+        int diaRSum = calcDiaLineR3(DOT_HUMAN);
+
+        int choice = Math.max(Math.max(horSum,verSum),Math.max(diaLSum,diaRSum));
+
+        boolean action = false;
+        if (choice == horSum) action = placeOnHorLine() ;
+        if (!action & choice == verSum) action = placeOnVerLine() ;
+        if (!action & choice == diaLSum) action = placeDiaLLine() ;
+        if (!action & choice == diaRSum) action = placeDiaRLine() ;
+        if (!action) aiTurn();
+    }
+
+    private static boolean placeOnHorLine() {
+        boolean result = false;
+        int x = lastX - 1;
+        while(isValidCell(x,lastY)) {
+            if (isEmptyCell(x,lastY)) {
+                field[lastY][x] = DOT_AI;
+                result = true;
+                break;
+            } else x--;
+        }
+        if (!result) {
+            x = lastX + 1;
+            while(isValidCell(x,lastY)) {
+                if (isEmptyCell(x,lastY)) {
+                    field[lastY][x] = DOT_AI;
+                    result = true;
+                    break;
+                } else x++;
+            }
+        }
+        return result;
+    }
+
+    private static boolean placeOnVerLine() {
+        boolean result = false;
+        int y = lastY - 1;
+        while(isValidCell(lastX,y)) {
+            if (isEmptyCell(lastX,y)) {
+                field[y][lastX] = DOT_AI;
+                result = true;
+                break;
+            } else y--;
+        }
+        if (!result) {
+            y = lastY + 1;
+            while(isValidCell(lastX,y)) {
+                if (isEmptyCell(lastX,y)) {
+                    field[y][lastX] = DOT_AI;
+                    result = true;
+                    break;
+                } else y++;
+            }
+        }
+        return result;
+    }
+
+    private static boolean placeDiaLLine() {
+        boolean result = false;
+        int x = lastX - 1;
+        int y = diaFunc1(x);
+        while(isValidCell(x,y)) {
+            if (isEmptyCell(x,y)) {
+                field[y][x] = DOT_AI;
+                result = true;
+                break;
+            } else {
+                x--;
+                y = diaFunc1(x);
+            }
+        }
+        if (!result) {
+            x = lastX + 1;
+            y = diaFunc1(x);
+            while(isValidCell(x,y)) {
+                if (isEmptyCell(x,y)) {
+                    field[y][x] = DOT_AI;
+                    result = true;
+                    break;
+                } else {
+                    x++;
+                    y = diaFunc1(x);
                 }
             }
         }
-        return sum == dotNumber;
+        return result;
+    }
+
+    private static boolean placeDiaRLine() {
+        boolean result = false;
+        int x = lastX - 1;
+        int y = diaFunc2(x);
+        while(isValidCell(x,y)) {
+            if (isEmptyCell(x,y)) {
+                field[y][x] = DOT_AI;
+                result = true;
+                break;
+            } else {
+                x--;
+                y = diaFunc2(x);
+            }
+        }
+        if (!result) {
+            x = lastX + 1;
+            y = diaFunc2(x);
+            while(isValidCell(x,y)) {
+                if (isEmptyCell(x,y)) {
+                    field[y][x] = DOT_AI;
+                    result = true;
+                    break;
+                } else {
+                    x++;
+                    y = diaFunc2(x);
+                }
+            }
+        }
+        return result;
     }
 
     public static void main(String[] args) {
@@ -195,7 +354,7 @@ public class TicTacToe {
             while (true) {
                 humanTurn();
                 if (checkEndGame(DOT_HUMAN, "Human win!")) break;
-                aiTurn();
+                aiSmartTurn();
                 if (checkEndGame(DOT_AI, "Computer win!")) break;
             }
             System.out.println("Wanna play again? (y/n) >>> ");
