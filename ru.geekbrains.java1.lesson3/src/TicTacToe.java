@@ -139,7 +139,7 @@ public class TicTacToe {
             int sum = 0;
             for (int x = 0; x < dotNumber; x++) {
                 if (field[lastY][x + i] == c) {
-                    sum = sum +  1;
+                    sum++;
                     if (sum > maxSum) maxSum = sum;
                 }
                 else {
@@ -158,7 +158,7 @@ public class TicTacToe {
             int sum = 0;
             for (int y = 0; y < dotNumber; y++) {
                 if (field[y + i][lastX] == c) {
-                    sum = sum +  1;
+                    sum++;
                     if (sum > maxSum) maxSum = sum;
                 }
                 else {
@@ -188,13 +188,10 @@ public class TicTacToe {
             int y = diaFunc1(x);
             if (y >= 0 && y < fieldSizeY) {
                 if (field[y][x] == c) {
-                    sum = sum + 1;
+                    sum++;
                     if (sum > maxSum) maxSum = sum;
                 }
-                else {
-                    if (sum > maxSum) maxSum = sum;
-                    sum = 0;
-                }
+                else sum = 0;
                 if (sum == dotNumber) break;
             }
         }
@@ -207,13 +204,10 @@ public class TicTacToe {
             int y = diaFunc2(x);
             if (y >= 0 && y < fieldSizeY) {
                 if (field[y][x] == c) {
-                    sum = sum + 1;
+                    sum++;
                     if (sum > maxSum) maxSum = sum;
                 }
-                else {
-                    if (sum > maxSum) maxSum = sum;
-                    sum = 0;
-                }
+                else sum = 0;
                 if (sum == dotNumber) break;
             }
         }
