@@ -1,3 +1,5 @@
+package ru.geekbrains.java1.lesson2;
+
 import java.util.Arrays;
 
 public class lesson2 {
