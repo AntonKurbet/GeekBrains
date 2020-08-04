@@ -245,6 +245,7 @@ public class TicTacToe {
         if (!result) {
             x = lastX + 1;
             while(isValidCell(x,lastY)) {
+                if (isAICell(x,lastY)) break;
                 if (isEmptyCell(x,lastY)) {
                     field[lastY][x] = DOT_AI;
                     result = true;
@@ -259,6 +260,7 @@ public class TicTacToe {
         boolean result = false;
         int y = lastY - 1;
         while(isValidCell(lastX,y)) {
+            if (isAICell(lastX,y)) break;
             if (isEmptyCell(lastX,y)) {
                 field[y][lastX] = DOT_AI;
                 result = true;
@@ -283,6 +285,7 @@ public class TicTacToe {
         int x = lastX - 1;
         int y = diaFunc1(x);
         while(isValidCell(x,y)) {
+            if (isAICell(x,y)) break;
             if (isEmptyCell(x,y)) {
                 field[y][x] = DOT_AI;
                 result = true;
@@ -296,6 +299,7 @@ public class TicTacToe {
             x = lastX + 1;
             y = diaFunc1(x);
             while(isValidCell(x,y)) {
+                if (isAICell(x,y)) break;
                 if (isEmptyCell(x,y)) {
                     field[y][x] = DOT_AI;
                     result = true;
@@ -314,6 +318,7 @@ public class TicTacToe {
         int x = lastX - 1;
         int y = diaFunc2(x);
         while(isValidCell(x,y)) {
+            if (isAICell(x,y)) break;
             if (isEmptyCell(x,y)) {
                 field[y][x] = DOT_AI;
                 result = true;
@@ -327,6 +332,7 @@ public class TicTacToe {
             x = lastX + 1;
             y = diaFunc2(x);
             while(isValidCell(x,y)) {
+                if (isAICell(x,y)) break;
                 if (isEmptyCell(x,y)) {
                     field[y][x] = DOT_AI;
                     result = true;
@@ -338,6 +344,10 @@ public class TicTacToe {
             }
         }
         return result;
+    }
+
+    private static boolean isAICell(int x, int y) {
+        return field[y][x] == DOT_AI;
     }
 
     public static void main(String[] args) {
