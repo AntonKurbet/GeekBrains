@@ -1,7 +1,10 @@
 package ru.geekbrains.java1.lesson5;
 
+import ru.geekbrains.java1.lesson5.zoo.Animal;
 import ru.geekbrains.java1.lesson5.zoo.Cat;
 import ru.geekbrains.java1.lesson5.zoo.Dog;
+
+import java.util.Random;
 
 public class Lesson5 {
 
@@ -27,6 +30,16 @@ public class Lesson5 {
         c.swim(8);
         d.swim(8);
 
-        Dog[] dogs = {new Dog("Tuzick", 200, 1f, 50)};
+        System.out.println("-----------");
+
+        Random r = new Random(300);
+
+        Animal[] animals = {new Dog("Tuzick", 200, 1f, 50),
+                            new Cat("Murzick", 100, 2.5f, 5) };
+        for (int i = 0; i < animals.length; i++) {
+            animals[i].run(r.nextInt(300));
+            animals[i].swim(r.nextInt(100));
+            animals[i].jump(r.nextFloat() * 5);
+        }
     }
 }
