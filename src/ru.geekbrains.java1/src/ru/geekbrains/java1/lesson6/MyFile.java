@@ -6,9 +6,11 @@ import java.util.Scanner;
 public class MyFile {
 
     private final String fileName;
+    private final String directory;
 
     MyFile(String fileName) {
         this.fileName = fileName;
+        this.directory = new File(fileName).getAbsoluteFile().getParentFile().getAbsolutePath();
     }
 
     public void createFromString(String data) throws FileNotFoundException {
@@ -35,16 +37,11 @@ public class MyFile {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         while (scanner.hasNextLine()) {
             n++;
-            String str = scanner.nextLine();
-            if (str.contains(word)) {
+            if (scanner.nextLine().contains(word)) {
                 return n;
             }
         }
         return 0;
-    }
-
-    public String getDir() {
-        return new File(this.fileName).getAbsoluteFile().getParentFile().getAbsolutePath();
     }
 
     public static String findWordInDir(String dirName, String word) throws FileNotFoundException {
@@ -52,8 +49,7 @@ public class MyFile {
         StringBuilder result = new StringBuilder();
         if (fileNames != null)
             for (int i = 0; i < fileNames.length; i++) {
-                boolean fd = new File(dirName,fileNames[i]).isDirectory();
-                if (!fd) {
+                if (!new File(dirName,fileNames[i]).isDirectory()) {
                     if (new MyFile(fileNames[i]).findWord(word) > 0) {
                         result.append(fileNames[i]);
                         result.append('\n');
@@ -65,5 +61,9 @@ public class MyFile {
 
     public String getName() {
         return this.fileName;
+    }
+
+    public String getDir() {
+        return this.directory;
     }
 }
