@@ -4,40 +4,49 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Line2D;
 
 public class Map extends JPanel {
     public static final int MODE_HVH = 0;
     public static final int MODE_HVA = 1;
+    public static int fieldSizeX;
+    public static int fieldSizeY;
 
     private JButton[][] field;
 
     Map() {
-        setBackground(Color.DARK_GRAY);
+        setBackground(Color.LIGHT_GRAY);
     }
 
-    private void initField(int fieldSizeX, int fieldSizeY) {
-        field = new JButton[fieldSizeY][fieldSizeX];
+    public void paint(Graphics g) {
 
-        setLayout(new GridLayout(fieldSizeX, fieldSizeY));
-        for (int y = 0; y < fieldSizeY; y++) {
-            for (int x = 0; x < fieldSizeX; x++) {
-                field[y][x] = new JButton();
-                //field[y][x].setText("X");
-                field[y][x].addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        //System.out.println("123");
-                    }
-                });
-                field[y][x].setBackground(Color.LIGHT_GRAY);
-                this.add(field[y][x]);
-            }
+        super.paint(g);
+
+        if (fieldSizeX <= 0 && fieldSizeY <= 0) return;
+
+        int cellSizeX = this.getWidth() / fieldSizeX;
+        int cellSizeY = this.getHeight() / fieldSizeY;
+
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(3));
+        g2d.setPaint(Color.DARK_GRAY);
+
+        for (int x = 1; x < fieldSizeX; x++) {
+            Line2D lin = new Line2D.Float(x * cellSizeX, 0, x * cellSizeX, this.getHeight());
+            g2d.draw(lin);
         }
 
-        this.revalidate();
+        for (int y = 1; y < fieldSizeY; y++) {
+            Line2D lin = new Line2D.Float(0, y * cellSizeY, this.getWidth(),y * cellSizeY);
+            g2d.draw(lin);
+        }
     }
 
     void startNewGame(int mode, int fieldSizeX, int fieldSizeY, int winLength) {
-        initField(fieldSizeX,fieldSizeY);
+        this.fieldSizeX = fieldSizeX;
+        this.fieldSizeY = fieldSizeY;
+
+        repaint();
+        revalidate();
     }
 }
