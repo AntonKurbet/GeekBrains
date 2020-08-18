@@ -18,16 +18,21 @@ public class Map extends JPanel {
         setBackground(Color.LIGHT_GRAY);
     }
 
-    public void paint(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
 
         super.paint(g);
 
+        render((Graphics2D) g);
+    }
+
+    private void render(Graphics2D g) {
         if (fieldSizeX <= 0 && fieldSizeY <= 0) return;
 
         int cellSizeX = this.getWidth() / fieldSizeX;
         int cellSizeY = this.getHeight() / fieldSizeY;
 
-        Graphics2D g2d = (Graphics2D) g;
+        Graphics2D g2d = g;
         g2d.setStroke(new BasicStroke(3));
         g2d.setPaint(Color.DARK_GRAY);
 
@@ -47,6 +52,6 @@ public class Map extends JPanel {
         this.fieldSizeY = fieldSizeY;
 
         repaint();
-        revalidate();
+        //revalidate();
     }
 }
