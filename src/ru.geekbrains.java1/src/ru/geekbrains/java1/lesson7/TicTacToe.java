@@ -78,52 +78,46 @@ public class TicTacToe {
         return true;
     }
 
-    private static boolean checkWinCell(char c, int moveX, int moveY, int n) {
-        int i;
-        int x = moveX;
-        int y = moveY;
-        for (i = 1; i < n; i++) { //UR
-            x+=i; y-=i;
-            if (!isValidCell(x, y) || field[y][x] != c) break;
+    private static boolean checkWinCell(char c, int x, int y, int n) {
+        int ur = 0, r = 0, dr = 0, d = 0;
+        for (int i = 0; i < n; i++) { //
+            if (isValidCell(x + i, y - i) && (field[y - i][x + i] == c)) ur++;
+            if (isValidCell(x + i, y)        && (field[y][x + i] == c))     r++;
+            if (isValidCell(x + i, y + i) && (field[y + i][x + i] == c)) dr++;
+            if (isValidCell(x, y + i)        && (field[y + i][x] == c))     d++;
         }
-        if (i < dotNumber) {
-            x = moveX;
-            y = moveY;
-            for (i = 1; i < n; i++) { //R
-                x+=i;
-                if (!isValidCell(x,y) || field[y][x] != c) break;
-            }
-        } else return true;
-        if (i < n) {
-            x = moveX;
-            y = moveY;
-            for (i = 1; i < n; i++) { //DR
-                x+=i; y+=i;
-                if (!isValidCell(x,y) || field[y][x] != c) break;
-            }
-        } else return true;
-        if (i < n) {
-            x = moveX;
-            y = moveY;
-            for (i = 1; i < n; i++) { //D
-                y+=i;
-                if (!isValidCell(x,y) || field[y][x] != c) break;
-            }
-        } else return true;
-        return i == n;
+        return ur == n || r == n || dr == n || d ==n;
     }
 
-    private static boolean checkWin(char c) {
-        return checkWinCell(c, lastX, lastY, dotNumber);
+    private static boolean checkWin(char c, int moveX, int moveY, int dots) {
+        for (int y = 0; y <= fieldSizeY; y++)
+            for (int x = 0; x <= fieldSizeX; x++)
+                if (isValidCell(x,y)  && checkWinCell(c, x, y, dots))
+                        return true;
+        return false;
     }
 
     private static void aiTurn() {
+
+        for (int x = 0; x < fieldSizeX; x++) {
+            for (int y = 0; y < fieldSizeY; y++) {
+                if (isEmptyCell(x, y)) {
+                    field[y][x] = DOT_AI;
+                    if (checkWin(DOT_AI, x, y, dotNumber))  return;
+                    else field[y][x] = DOT_EMPTY;
+                }
+            }
+        }
+
         for (int i = dotNumber; i > 1; i--) {
             for (int x = 0; x < fieldSizeX; x++) {
                 for (int y = 0; y < fieldSizeY; y++) {
-                    if (isEmptyCell(x, y) && checkWinCell(DOT_HUMAN, x, y, i)) {
-                        field[y][x] = DOT_AI;
-                        return;
+                    if (isEmptyCell(x, y)) {
+                        field[y][x] = DOT_HUMAN;
+                        if (checkWin(DOT_HUMAN, x, y, i)) {
+                            field[y][x] = DOT_AI;
+                            return;
+                        } else field[y][x] =DOT_EMPTY;
                     }
                 }
             }
@@ -154,7 +148,7 @@ public class TicTacToe {
     private static boolean checkEndGame(char dot, String winMessage) {
         printField();
 
-        if (checkWin(dot)) {
+        if (checkWin(dot,lastX,lastY,dotNumber)) {
             System.out.println(winMessage);
             return true;
         }

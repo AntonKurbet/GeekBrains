@@ -79,9 +79,13 @@ public class SettingsWindow extends JFrame {
 
         add(new JLabel("  Choose field size"));
         add(lbFieldSize);
+        slideFieldSize.setMinorTickSpacing(1);
+        slideFieldSize.setPaintTicks(true);
         add(slideFieldSize);
         add(new JLabel("  Choose win length"));
         add(lbWinLength);
+        slideWinLen.setMinorTickSpacing(1);
+        slideWinLen.setPaintTicks(true);
         add(slideWinLen);
     }
 

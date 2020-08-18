@@ -2,6 +2,8 @@ package ru.geekbrains.java1.lesson7;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Map extends JPanel {
     public static final int MODE_HVH = 0;
@@ -20,6 +22,13 @@ public class Map extends JPanel {
         for (int y = 0; y < fieldSizeY; y++) {
             for (int x = 0; x < fieldSizeX; x++) {
                 field[y][x] = new JButton();
+                //field[y][x].setText("X");
+                field[y][x].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        //System.out.println("123");
+                    }
+                });
                 field[y][x].setBackground(Color.LIGHT_GRAY);
                 this.add(field[y][x]);
             }

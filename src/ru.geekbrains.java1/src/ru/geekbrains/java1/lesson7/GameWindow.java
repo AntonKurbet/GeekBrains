@@ -21,8 +21,8 @@ public class GameWindow extends JFrame {
         setLocation(WIN_POSX, WIN_POSY);
         setTitle("TicTacToe");
         setResizable(false);
-        JButton btnStartGame = new JButton("Start new game");
-        JButton btnExit = new JButton("<html><body><b>Exit</b></body></html>");
+        JButton btnStartGame = new JButton("<html><body><i>Start new game</i></body></html>");
+        JButton btnExit = new JButton("<html><body><i>Exit</i></body></html>");
         map = new Map();
         settings = new SettingsWindow(this);
         btnStartGame.addActionListener(new ActionListener() {
