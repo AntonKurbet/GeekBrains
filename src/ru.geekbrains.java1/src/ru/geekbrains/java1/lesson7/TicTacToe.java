@@ -5,11 +5,15 @@ import java.util.Scanner;
 
 public class TicTacToe {
 
-    private static final char DOT_HUMAN = 'X';
-    private static final char DOT_AI = 'O';
+    static final char DOT_HUMAN = 'X';
+    static final char DOT_AI = 'O';
     private static final char DOT_EMPTY = '.';
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final Random RANDOM = new Random();
+    static final int STATE_WIN_HUMAN = 1;
+    static final int STATE_WIN_AI = 2;
+    static final int STATE_DRAW = 3;
+    static final int STATE_CONTINUE = 4;
     private static int fieldSizeY;
     private static int fieldSizeX;
     private static int dotNumber;
@@ -33,24 +37,6 @@ public class TicTacToe {
         }
     }
 
-    private static void printField() {
-        System.out.print("+");
-        for (int x = 0; x < fieldSizeX * 2 + 1; x++)
-            System.out.print((x % 2 == 0) ? "-" : x / 2 + 1);
-        System.out.println();
-
-        for (int y = 0; y < fieldSizeY; y++) {
-            System.out.print(y + 1 + "|");
-            for (int x = 0; x < fieldSizeX; x++)
-                System.out.print(field[y][x] + "|");
-            System.out.println();
-        }
-
-        for (int x = 0; x <= fieldSizeX * 2 + 1; x++)
-            System.out.print("-");
-        System.out.println();
-    }
-
     private static void humanTurn() {
         do {
             System.out.printf("Введите координаты хода X (от 1 до %d) и Y (от 1 до %d) через пробел >>> \n",
@@ -61,11 +47,11 @@ public class TicTacToe {
         field[lastY][lastX] = DOT_HUMAN;
     }
 
-    private static boolean isEmptyCell(int x, int y) {
+    public static boolean isEmptyCell(int x, int y) {
         return field[y][x] == DOT_EMPTY;
     }
 
-    private static boolean isValidCell(int x, int y) {
+    public static boolean isValidCell(int x, int y) {
         return x >= 0 && x < fieldSizeX && y >= 0 && y < fieldSizeY;
     }
 
@@ -97,7 +83,7 @@ public class TicTacToe {
         return false;
     }
 
-    private static void aiTurn() {
+    static void aiTurn() {
 
         for (int x = 0; x < fieldSizeX; x++) {
             for (int y = 0; y < fieldSizeY; y++) {
@@ -128,34 +114,21 @@ public class TicTacToe {
         return field[y][x] == DOT_AI;
     }
 
-    public static void main(String[] args) {
-        String answer;
-        do {
-            initField();
-            printField();
-            while (true) {
-                humanTurn();
-                if (checkEndGame(DOT_HUMAN, "Human win!")) break;
-                aiTurn();
-                if (checkEndGame(DOT_AI, "Computer win!")) break;
-            }
-            System.out.println("Wanna play again? (y/n) >>> ");
-            answer = SCANNER.next();
-        } while (answer.equals("y"));
-        SCANNER.close();
-    }
-
-    private static boolean checkEndGame(char dot, String winMessage) {
-        printField();
-
+    public static int checkEndGame(char dot) {
         if (checkWin(dot,lastX,lastY,dotNumber)) {
-            System.out.println(winMessage);
-            return true;
+            return dot == DOT_HUMAN ? STATE_WIN_HUMAN : STATE_WIN_AI ;
         }
         if (checkDraw()) {
-            System.out.println("Draw!");
-            return true;
+            return STATE_DRAW;
         }
-        return false;
+        return STATE_CONTINUE;
+    }
+
+    public static void setFieldCell(int cellX, int cellY, char c) {
+        field[cellY][cellX] = c;
+    }
+
+    public static char getFieldCell(int cellX, int cellY) {
+        return field[cellY][cellX];
     }
 }
