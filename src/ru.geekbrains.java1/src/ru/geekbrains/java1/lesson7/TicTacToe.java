@@ -10,6 +10,8 @@ public class TicTacToe {
     private static final char DOT_EMPTY = '.';
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final Random RANDOM = new Random();
+
+    static final int STATE_NONE = 0;
     static final int STATE_WIN_HUMAN = 1;
     static final int STATE_WIN_AI = 2;
     static final int STATE_DRAW = 3;
@@ -21,13 +23,10 @@ public class TicTacToe {
     private static int lastY;
     private static char[][] field;
 
-    private static void initField(/*int fSX, int fSY, int dN*/) {
-//        fieldSizeX = fSX;
-//        fieldSizeY = fSY;
-//        dotNumber = dN;
-        fieldSizeX = 5;
-        fieldSizeY = 7;
-        dotNumber = 4;
+    public static void initField(int fSX, int fSY, int dN) {
+        fieldSizeX = fSX;
+        fieldSizeY = fSY;
+        dotNumber = dN;
 
         field = new char[fieldSizeY][fieldSizeX];
         for (int y = 0; y < fieldSizeY; y++) {

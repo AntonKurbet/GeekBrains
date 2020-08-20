@@ -13,10 +13,10 @@ import static ru.geekbrains.java1.lesson7.TicTacToe.DOT_HUMAN;
 public class Map extends JPanel {
     public static final int MODE_HVH = 0;
     public static final int MODE_HVA = 1;
+    private static final int DOT_PADDING = 10;
     private static int fieldSizeX;
     private static int fieldSizeY;
-    private static boolean initialized;
-    private static boolean isGameOver;
+    private static int gameState = TicTacToe.STATE_NONE;
 
     private static int mapWidth;
     private static int mapHeight;
@@ -26,11 +26,6 @@ public class Map extends JPanel {
     private JButton[][] field;
 
     Map() {
-        mapWidth = this.getWidth();
-        mapHeight = this.getHeight();
-        cellSizeX = mapWidth / fieldSizeX;
-        cellSizeY = mapHeight / fieldSizeY;
-
         setBackground(Color.LIGHT_GRAY);
         addMouseListener(new MouseAdapter() {
             @Override
@@ -42,18 +37,29 @@ public class Map extends JPanel {
     }
 
     private void onClick(MouseEvent e) {
-        if (isGameOver || !initialized) return;
+        if (gameState != TicTacToe.STATE_CONTINUE) return;
         int cellX = e.getX() / cellSizeX;
         int cellY = e.getY() / cellSizeY;
+
         if (!TicTacToe.isValidCell(cellX, cellY) || !TicTacToe.isEmptyCell(cellX, cellY))
             return;
+
         TicTacToe.setFieldCell(cellX,cellY, DOT_HUMAN);
-        if (TicTacToe.checkEndGame(DOT_HUMAN) == TicTacToe.STATE_WIN_HUMAN)
+
+        gameState = TicTacToe.checkEndGame(DOT_HUMAN);
+        if ( gameState == TicTacToe.STATE_WIN_HUMAN || gameState == TicTacToe.STATE_DRAW) {
+            repaint();
             return;
+        }
+
         TicTacToe.aiTurn();
         repaint();
-        if (TicTacToe.checkEndGame(TicTacToe.DOT_AI) == TicTacToe.STATE_WIN_AI)
+
+        gameState = TicTacToe.checkEndGame(TicTacToe.DOT_AI);
+        if (gameState == TicTacToe.STATE_WIN_AI || gameState == TicTacToe.STATE_DRAW) {
+            repaint();
             return;
+        }
     }
 
     @Override
@@ -64,12 +70,32 @@ public class Map extends JPanel {
     }
 
     private void render(Graphics g) {
-        if (!initialized) return;
+        if (gameState == TicTacToe.STATE_NONE) return;
 
         paintField(g);
-
         paintMoves(g);
 
+        if (gameState != TicTacToe.STATE_CONTINUE) paintBanner(g);
+
+    }
+
+    private static void paintBanner(Graphics g) {
+        String message;
+        switch (gameState) {
+            case TicTacToe.STATE_DRAW:
+                message = "Draw!";
+                break;
+            case TicTacToe.STATE_WIN_HUMAN:
+                message = "Human wins!";
+                break;
+            case TicTacToe.STATE_WIN_AI:
+                message = "Computer wins!";
+                break;
+            default:
+                message = "Shit Happens!";
+        }
+
+        g.drawString(message, DOT_PADDING, mapHeight / 2);
     }
 
     private void paintMoves(Graphics g) {
@@ -77,10 +103,15 @@ public class Map extends JPanel {
             for (int y = 0; y < fieldSizeY; y++) {
                 switch (TicTacToe.getFieldCell(x,y)) {
                     case DOT_HUMAN:
+                        g.drawLine(x * cellSizeX + DOT_PADDING, y * cellSizeY + DOT_PADDING,
+                                (x + 1) * cellSizeX - DOT_PADDING, (y + 1) * cellSizeY - DOT_PADDING);
+                        g.drawLine(x * cellSizeX + DOT_PADDING, (y + 1) * cellSizeY - DOT_PADDING,
+                                (x + 1) * cellSizeX - DOT_PADDING, y * cellSizeY + DOT_PADDING);
 
                         break;
                     case DOT_AI:
-
+                        g.drawOval(x * cellSizeX + DOT_PADDING, y * cellSizeY + DOT_PADDING,
+                                cellSizeX - 2 * DOT_PADDING, cellSizeY - 2 * DOT_PADDING);
                         break;
                 }
             }
@@ -101,11 +132,18 @@ public class Map extends JPanel {
         }
     }
 
-    void startNewGame(int mode, int fieldSizeX, int fieldSizeY, int winLength) {
-        this.fieldSizeX = fieldSizeX;
-        this.fieldSizeY = fieldSizeY;
+    void startNewGame(int mode, int fSizeX, int fSizeY, int wLength) {
+        fieldSizeX = fSizeX;
+        fieldSizeY = fSizeY;
 
-        initialized = true;
+        gameState = TicTacToe.STATE_CONTINUE;
+
+        TicTacToe.initField(fieldSizeX,fieldSizeY,wLength);
+        mapWidth = this.getWidth();
+        mapHeight = this.getHeight();
+        cellSizeX = mapWidth / fieldSizeX;
+        cellSizeY = mapHeight / fieldSizeY;
+
         repaint();
 
     }
