@@ -1,7 +1,5 @@
 package ru.geekbrains.java1.lesson8;
 
-import org.omg.SendingContext.RunTime;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -18,7 +16,7 @@ public class SettingsWindow extends JFrame {
     private static final String FIELD_SIZE_PREFIX = "  Field size is: ";
     private static final String WIN_LENGTH_PREFIX = "  Win length is: ";
 
-    private GameWindow gameWindow;
+    private final GameWindow gameWindow;
     private JRadioButton humVSAI;
     private JRadioButton humVShum;
     private JSlider slideWinLen;
