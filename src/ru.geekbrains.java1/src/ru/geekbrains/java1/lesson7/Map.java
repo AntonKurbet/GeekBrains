@@ -4,41 +4,100 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Line2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import static ru.geekbrains.java1.lesson7.TicTacToe.DOT_AI;
+import static ru.geekbrains.java1.lesson7.TicTacToe.DOT_HUMAN;
 
 public class Map extends JPanel {
     public static final int MODE_HVH = 0;
     public static final int MODE_HVA = 1;
-    public static int fieldSizeX;
-    public static int fieldSizeY;
+    private static int fieldSizeX;
+    private static int fieldSizeY;
+    private static boolean initialized;
+    private static boolean isGameOver;
+
+    private static int mapWidth;
+    private static int mapHeight;
+    private static int cellSizeX;
+    private static int cellSizeY;
 
     private JButton[][] field;
 
     Map() {
+        mapWidth = this.getWidth();
+        mapHeight = this.getHeight();
+        cellSizeX = mapWidth / fieldSizeX;
+        cellSizeY = mapHeight / fieldSizeY;
+
         setBackground(Color.LIGHT_GRAY);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                onClick(e);
+            }
+        });
     }
 
-    public void paint(Graphics g) {
+    private void onClick(MouseEvent e) {
+        if (isGameOver || !initialized) return;
+        int cellX = e.getX() / cellSizeX;
+        int cellY = e.getY() / cellSizeY;
+        if (!TicTacToe.isValidCell(cellX, cellY) || !TicTacToe.isEmptyCell(cellX, cellY))
+            return;
+        TicTacToe.setFieldCell(cellX,cellY, DOT_HUMAN);
+        if (TicTacToe.checkEndGame(DOT_HUMAN) == TicTacToe.STATE_WIN_HUMAN)
+            return;
+        TicTacToe.aiTurn();
+        repaint();
+        if (TicTacToe.checkEndGame(TicTacToe.DOT_AI) == TicTacToe.STATE_WIN_AI)
+            return;
+    }
 
-        super.paint(g);
+    @Override
+    protected void paintComponent(Graphics g) {
 
-        if (fieldSizeX <= 0 && fieldSizeY <= 0) return;
+        super.paintComponent(g);
+        render(g);
+    }
 
-        int cellSizeX = this.getWidth() / fieldSizeX;
-        int cellSizeY = this.getHeight() / fieldSizeY;
+    private void render(Graphics g) {
+        if (!initialized) return;
 
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setStroke(new BasicStroke(3));
-        g2d.setPaint(Color.DARK_GRAY);
+        paintField(g);
+
+        paintMoves(g);
+
+    }
+
+    private void paintMoves(Graphics g) {
+        for (int x = 0; x < fieldSizeX; x++) {
+            for (int y = 0; y < fieldSizeY; y++) {
+                switch (TicTacToe.getFieldCell(x,y)) {
+                    case DOT_HUMAN:
+
+                        break;
+                    case DOT_AI:
+
+                        break;
+                }
+            }
+        }
+    }
+
+    private void paintField(Graphics g) {
+        g.setColor(Color.DARK_GRAY);
 
         for (int x = 1; x < fieldSizeX; x++) {
-            Line2D lin = new Line2D.Float(x * cellSizeX, 0, x * cellSizeX, this.getHeight());
-            g2d.draw(lin);
+            int x1 = x * cellSizeX;
+            g.drawLine(x1, 0, x1, mapHeight);
         }
 
         for (int y = 1; y < fieldSizeY; y++) {
-            Line2D lin = new Line2D.Float(0, y * cellSizeY, this.getWidth(),y * cellSizeY);
-            g2d.draw(lin);
+            int y1 = y * cellSizeY;
+            g.drawLine(0, y1, mapWidth,y1);
         }
     }
 
@@ -46,7 +105,8 @@ public class Map extends JPanel {
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
 
+        initialized = true;
         repaint();
-        revalidate();
+
     }
 }
