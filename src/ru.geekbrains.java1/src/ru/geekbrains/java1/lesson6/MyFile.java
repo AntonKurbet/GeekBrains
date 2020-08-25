@@ -11,6 +11,7 @@ public class MyFile {
     MyFile(String fileName) {
         this.fileName = fileName;
         this.directory = new File(fileName).getAbsoluteFile().getParentFile().getAbsolutePath();
+        //this.directory = new File(".").getCanonicalPath();
     }
 
     public void createFromString(String data) throws FileNotFoundException {
@@ -23,6 +24,7 @@ public class MyFile {
     public void appendFromFile(String fileName) throws FileNotFoundException {
         copyFromFile(fileName,true);
     }
+
     public void copyFromFile(String fileName, boolean append) throws FileNotFoundException {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         PrintStream ps = new PrintStream(new FileOutputStream(this.fileName, append));
@@ -30,14 +32,17 @@ public class MyFile {
         while (scanner.hasNext()) {
             ps.println(scanner.nextLine());
         }
+        ps.flush();
+        ps.close();
     }
 
     public long findWord(String word) throws FileNotFoundException {
         long n = 0;
         Scanner scanner = new Scanner(new FileInputStream(fileName));
-        while (scanner.hasNextLine()) {
+        while (scanner.hasNext()) {
             n++;
-            if (scanner.nextLine().contains(word)) {
+            // тут можно написать более сложную логику поиска слова и лучше сделать на regexp
+            if (scanner.next().contains(word)) {
                 return n;
             }
         }
@@ -49,21 +54,21 @@ public class MyFile {
         StringBuilder result = new StringBuilder();
         if (fileNames != null)
             for (int i = 0; i < fileNames.length; i++) {
-                if (!new File(dirName,fileNames[i]).isDirectory()) {
-                    if (new MyFile(fileNames[i]).findWord(word) > 0) {
+                if (!new File(dirName,fileNames[i]).isDirectory()
+                        &&
+                    new MyFile(fileNames[i]).findWord(word) > 0) {
                         result.append(fileNames[i]);
                         result.append('\n');
-                    }
                 }
             }
         return result.toString();
     }
 
-    public String getName() {
+    public String getFileName() {
         return this.fileName;
     }
 
-    public String getDir() {
+    public String getDirectory() {
         return this.directory;
     }
 }
